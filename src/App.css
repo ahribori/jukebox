@@ -1,0 +1,13 @@
+body {
+    font-family: 'Noto Sans KR', Helvetica, Arial, sans-serif;
+}
+
+.App > section {
+    padding: 16px;
+}
+
+@media screen and (max-width: 960px) {
+    .App > section {
+        padding: 0;
+    }
+}
