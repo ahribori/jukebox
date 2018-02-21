@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import * as Scroll from 'react-scroll';
+
 import { withStyles } from 'material-ui/styles';
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
+import Avatar from 'material-ui/Avatar';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
 
 import Player from './components/Player';
 import Navigator from './components/Navigator';
@@ -25,9 +30,9 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentVideoId: null,
-            currentVideoIndex: null,
             videos: [],
+            currentVideoId: null,
+            currentVideoIndex: 0,
             random: true,
             playerState: null,
         };
@@ -41,7 +46,8 @@ class App extends Component {
         this.setState({
             currentVideoIndex: e.index,
             currentVideoId: e.videoId,
-        })
+        });
+        Scroll.animateScroll.scrollToTop({ duration: 300 });
     };
 
     fetchData = () => {
@@ -94,11 +100,46 @@ class App extends Component {
         }
         if (this.state.playerState === 3 && code === -1) {
             // 재생 실패시 다음 곡 재생
-            this.play(getNextIndex());
+            // this.play(getNextIndex());
         }
         this.setState({
             playerState: code,
         })
+    };
+
+    renderAppBar = () => {
+        const currentVideo = this.state.videos[this.state.currentVideoIndex];
+        const styles = {
+            root: {
+                flexGrow: 1,
+            },
+            flex: {
+                flex: 1,
+            },
+            menuButton: {
+                marginLeft: -12,
+                marginRight: 20,
+            },
+        };
+        const { classes } = this.props;
+        return (
+            <div className={classes.root}>
+                <AppBar position="static" style={{
+                    paddingTop: 5,
+                    paddingBottom: 5,
+                }}>
+                    <Toolbar>
+                        <Avatar
+                            src={currentVideo && currentVideo.thumbnail}
+                            style={{
+                                marginRight: 10,
+                            }}
+                        />
+                        {currentVideo && currentVideo.title}
+                    </Toolbar>
+                </AppBar>
+            </div>
+        )
     };
 
     renderPlayer = () => (
@@ -123,13 +164,14 @@ class App extends Component {
                 <header>
                     <Grid container spacing={16}>
                         <Grid item xs={12}>
-                            <Paper className={classes.paper}>Nav</Paper>
+                            {this.renderAppBar()}
                         </Grid>
                     </Grid>
                 </header>
                 <section>
                     <Grid container spacing={16}>
                         <Grid item xs={12} md={6} lg={7}>
+                            <Paper className={classes.paper}>Ad</Paper>
                             {this.renderPlayer()}
                             <Paper className={classes.paper}>Ad</Paper>
                         </Grid>

@@ -46,7 +46,7 @@ class Item extends React.Component {
                     }}
                 />
                 <ListItemText
-                    primary={this.props.title}
+                    secondary={this.props.title}
                 />
             </ListItem>
         );
