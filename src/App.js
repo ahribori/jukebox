@@ -29,6 +29,7 @@ class App extends Component {
             currentVideoIndex: null,
             videos: [],
             random: true,
+            playerState: null,
         };
     }
 
@@ -73,7 +74,7 @@ class App extends Component {
     handlePlayerStateChange = (state) => {
         const code = state.data;
         const videosLength = this.state.videos.length;
-        if (code === 0) {
+        const getNextIndex = () => {
             let nextIndex;
             if (!this.state.random) {
                 nextIndex = this.state.currentIndex < videosLength - 1
@@ -86,8 +87,18 @@ class App extends Component {
                 }
                 nextIndex = randomIndex;
             }
-            this.play(nextIndex);
+            return nextIndex;
+        };
+        if (code === 0) {
+            this.play(getNextIndex());
         }
+        if (this.state.playerState === 3 && code === -1) {
+            // 재생 실패시 다음 곡 재생
+            this.play(getNextIndex());
+        }
+        this.setState({
+            playerState: code,
+        })
     };
 
     renderPlayer = () => (
