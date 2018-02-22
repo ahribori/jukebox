@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
 import './App.css';
 
 import * as Scroll from 'react-scroll';
@@ -215,9 +216,13 @@ class App extends Component {
     );
 
     render() {
+        const currentVideo = this.state.videos[this.state.currentVideoIndex];
         const { classes } = this.props;
         return (
             <div className="App">
+                <Helmet>
+                    <title>{currentVideo ? currentVideo.title : ''}</title>
+                </Helmet>
                 <header>
                     <Grid container spacing={16}>
                         <Grid item xs={12}>
