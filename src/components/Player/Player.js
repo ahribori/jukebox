@@ -9,7 +9,6 @@ class Player extends React.Component {
         videoId: PropTypes.string,
         id: PropTypes.string,
         className: PropTypes.string,
-        opts: PropTypes.object,
         onReady: PropTypes.func,
         onPlay: PropTypes.func,
         onPause: PropTypes.func,
@@ -24,18 +23,27 @@ class Player extends React.Component {
         videoId: null,
         id: null,
         className: null,
-        opts: {
-            playerVars: {
-                autoplay: 1,
-            },
+    };
+
+    handleStateChange = (e) => {
+        const state = {
+            target: e.target,
+            code: e.data,
         }
     };
 
     render() {
+        const opts = {
+            playerVars: {
+                autoplay: this.props.autoPlay ? 1 : 0,
+            },
+        };
+
         return (
             <div>
                 <div className="videowrapper">
                     <YouTube
+                        opts={opts}
                         {...this.props}
                     />
                 </div>

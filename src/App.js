@@ -34,6 +34,7 @@ class App extends Component {
             currentVideoId: null,
             currentVideoIndex: 0,
             random: true,
+            autoPlay: false,
             playerState: null,
         };
     }
@@ -64,47 +65,59 @@ class App extends Component {
         this.setState({
             videos,
         }, () => {
-            this.play(0);
+            this.play(0, false);
         })
     };
 
-    play = (index) => {
+    play = (index, autoPlay = true) => {
         if (index < this.state.videos.length) {
             this.setState({
                 currentVideoIndex: index,
                 currentVideoId: this.state.videos[index].videoId,
+                autoPlay,
             })
         }
     };
 
-    handlePlayerStateChange = (state) => {
-        const code = state.data;
+    getNextIndex = () => {
         const videosLength = this.state.videos.length;
-        const getNextIndex = () => {
-            let nextIndex;
-            if (!this.state.random) {
-                nextIndex = this.state.currentIndex < videosLength - 1
-                    ? this.state.currentIndex + 1 : 0;
-            } else {
-                let randomIndex = this.state.currentVideoIndex;
-                while (randomIndex === this.state.currentVideoIndex) {
-                    randomIndex = Math.round(Math.random() * (videosLength - 1));
-                    console.log(`randomIndex = ${randomIndex}`)
-                }
-                nextIndex = randomIndex;
+        let nextIndex;
+        if (!this.state.random) {
+            nextIndex = this.state.currentIndex < videosLength - 1
+                ? this.state.currentIndex + 1 : 0;
+        } else {
+            let randomIndex = this.state.currentVideoIndex;
+            while (randomIndex === this.state.currentVideoIndex) {
+                randomIndex = Math.round(Math.random() * (videosLength - 1));
+                console.log(`randomIndex = ${randomIndex}`)
             }
-            return nextIndex;
-        };
-        if (code === 0) {
-            this.play(getNextIndex());
+            nextIndex = randomIndex;
         }
-        if (this.state.playerState === 3 && code === -1) {
-            // 재생 실패시 다음 곡 재생
-            // this.play(getNextIndex());
-        }
+        return nextIndex;
+    };
+
+    onPlayerStateChange = (state) => {
         this.setState({
-            playerState: code,
+            playerState: state.data,
         })
+    };
+
+    onPlayerError = (error) => {
+        console.log('ERROR', error);
+        this.play(this.getNextIndex());
+    };
+
+    onPlayerPlay = (play) => {
+        console.log('PLAY', play)
+    };
+
+    onPlayerPause = (pause) => {
+        console.log('PAUSE', pause);
+    };
+
+    onPlayerEnd = (end) => {
+        console.log('END', end);
+        this.play(this.getNextIndex());
     };
 
     renderAppBar = () => {
@@ -145,7 +158,12 @@ class App extends Component {
     renderPlayer = () => (
         <Player
             videoId={this.state.currentVideoId}
-            onStateChange={this.handlePlayerStateChange}
+            onStateChange={this.onPlayerStateChange}
+            onPlay={this.onPlayerPlay}
+            onPause={this.onPlayerPause}
+            onEnd={this.onPlayerEnd}
+            onError={this.onPlayerError}
+            autoPlay={this.state.autoPlay}
         />
     );
 
