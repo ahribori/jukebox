@@ -11,6 +11,7 @@ import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 
 import Player from './components/Player';
+import Remocon from './components/Remocon';
 import Navigator from './components/Navigator';
 
 import data from './data.json';
@@ -47,6 +48,7 @@ class App extends Component {
         this.setState({
             currentVideoIndex: e.index,
             currentVideoId: e.videoId,
+            autoPlay: true,
         });
         Scroll.animateScroll.scrollToTop({ duration: 300 });
     };
@@ -96,6 +98,10 @@ class App extends Component {
         return nextIndex;
     };
 
+    onPlayerReady = (event) => {
+        this.player = event.target;
+    };
+
     onPlayerStateChange = (state) => {
         this.setState({
             playerState: state.data,
@@ -117,6 +123,28 @@ class App extends Component {
 
     onPlayerEnd = (end) => {
         console.log('END', end);
+        this.play(this.getNextIndex());
+    };
+
+    onRemoconPlayButtonClick = () => {
+        if (this.player) {
+            this.player.playVideo();
+        }
+    };
+
+    onRemoconPauseButtonClick = () => {
+        if (this.player) {
+            this.player.pauseVideo();
+        }
+    };
+
+    onRemoconStopButtonClick = () => {
+        if (this.player) {
+            this.player.stopVideo();
+        }
+    };
+
+    onRemoconNextButtonClick = () => {
         this.play(this.getNextIndex());
     };
 
@@ -158,12 +186,23 @@ class App extends Component {
     renderPlayer = () => (
         <Player
             videoId={this.state.currentVideoId}
+            onReady={this.onPlayerReady}
             onStateChange={this.onPlayerStateChange}
             onPlay={this.onPlayerPlay}
             onPause={this.onPlayerPause}
             onEnd={this.onPlayerEnd}
             onError={this.onPlayerError}
             autoPlay={this.state.autoPlay}
+        />
+    );
+
+    renderRemocon = () => (
+        <Remocon
+            playerState={this.state.playerState}
+            onPlayButtonClick={this.onRemoconPlayButtonClick}
+            onPauseButtonClick={this.onRemoconPauseButtonClick}
+            onStopButtonClick={this.onRemoconStopButtonClick}
+            onNextButtonClick={this.onRemoconNextButtonClick}
         />
     );
 
@@ -189,9 +228,18 @@ class App extends Component {
                 <section>
                     <Grid container spacing={16}>
                         <Grid item xs={12} md={6} lg={7}>
-                            <Paper className={classes.paper}>Ad</Paper>
-                            {this.renderPlayer()}
-                            <Paper className={classes.paper}>Ad</Paper>
+                            <Grid container spacing={16}>
+                                <Grid item xs={12}>
+                                    <Paper className={classes.paper}>Ad</Paper>
+                                    {this.renderPlayer()}
+                                    <Paper className={classes.paper}>Ad</Paper>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Paper className={classes.paper}>
+                                        {this.renderRemocon()}
+                                    </Paper>
+                                </Grid>
+                            </Grid>
                         </Grid>
                         <Grid item xs={12} md={6} lg={5}>
                             <Paper className={classes.paper}>
