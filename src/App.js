@@ -169,6 +169,9 @@ class App extends Component {
                 <AppBar position="static" style={{
                     paddingTop: 5,
                     paddingBottom: 5,
+                    border: 0,
+                    color: 'white',
+                    background: 'linear-gradient(45deg, #320b86 30%, #9a67ea 90%)',
                 }}>
                     <Toolbar>
                         <Avatar
@@ -237,7 +240,6 @@ class App extends Component {
                                 <Grid item xs={12}>
                                     <Paper className={classes.paper}>Ad</Paper>
                                     {this.renderPlayer()}
-                                    <Paper className={classes.paper}>Ad</Paper>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Paper className={classes.paper}>

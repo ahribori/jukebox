@@ -24,7 +24,10 @@ class Navigator extends React.Component {
     renderItems = () => {
         return this.props.videos.map((video, index) => {
             const selectedStyle = {
-                backgroundColor: 'orange',
+                background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                borderRadius: 3,
+                border: 0,
+                boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .30)',
             };
             return (
                 <Item
@@ -36,6 +39,7 @@ class Navigator extends React.Component {
                     thumbnail={video.thumbnail}
                     onClick={this.props.onItemClicked}
                     style={this.props.currentVideoIndex === index ? selectedStyle : {}}
+                    selected={this.props.currentVideoIndex === index}
                 />
             )
         });

@@ -12,6 +12,7 @@ class Item extends React.Component {
         description: PropTypes.string,
         thumbnail: PropTypes.string,
         onClick: PropTypes.func,
+        selected: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -21,6 +22,7 @@ class Item extends React.Component {
         thumbnail: null,
         onClick: () => {
         },
+        selected: false,
     };
 
     handleClick = () => {
@@ -45,9 +47,12 @@ class Item extends React.Component {
                         height: 60,
                     }}
                 />
-                <ListItemText
-                    secondary={this.props.title}
-                />
+                <span style={{
+                    fontSize: '0.8rem',
+                    fontWeight: this.props.selected ? 'bold' : '',
+                    color: this.props.selected ? 'white' : '',
+                    paddingLeft: 10,
+                }}>{this.props.title}</span>
             </ListItem>
         );
     }
