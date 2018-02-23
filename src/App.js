@@ -38,12 +38,24 @@ class App extends Component {
             random: true,
             autoPlay: false,
             playerState: null,
+            navigatorHeight: null,
         };
     }
 
     componentDidMount() {
         this.fetchData();
+        this.fittingNavigator();
+        window.addEventListener('resize', (e) => {
+            this.fittingNavigator();
+        });
     }
+
+    fittingNavigator = () => {
+        this.setState({
+            navigatorHeight: document.body.offsetWidth >= 960 ?
+                document.body.offsetHeight - 140 : 'auto',
+        });
+    };
 
     handleItemClick = (e) => {
         this.setState({
@@ -249,7 +261,12 @@ class App extends Component {
                             </Grid>
                         </Grid>
                         <Grid item xs={12} md={6} lg={5}>
-                            <Paper className={`${classes.paper} navigator`}>
+                            <Paper
+                                className={`${classes.paper} navigator`}
+                                style={{
+                                    height: this.state.navigatorHeight && this.state.navigatorHeight,
+                                }}
+                            >
                                 {this.renderNavigator()}
                             </Paper>
                         </Grid>
