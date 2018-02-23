@@ -249,7 +249,7 @@ class App extends Component {
                             </Grid>
                         </Grid>
                         <Grid item xs={12} md={6} lg={5}>
-                            <Paper className={classes.paper}>
+                            <Paper className={`${classes.paper} navigator`}>
                                 {this.renderNavigator()}
                             </Paper>
                         </Grid>
