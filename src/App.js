@@ -14,8 +14,10 @@ import Toolbar from 'material-ui/Toolbar';
 import Player from './components/Player';
 import Remocon from './components/Remocon';
 import Navigator from './components/Navigator';
+import Loading from './components/Loading';
 
-import data from './data.json';
+import { fetchPlaylistItems } from './api/fetch';
+import { setPlaylistItemsToLocalStorage, getPlaylistItemsFromLocalStorage } from './utils/storage';
 
 const styles = theme => ({
     root: {
@@ -38,6 +40,7 @@ class App extends Component {
             random: true,
             autoPlay: false,
             playerState: null,
+            dataState: false,
             navigatorHeight: null,
         };
     }
@@ -68,20 +71,62 @@ class App extends Component {
 
     fetchData = () => {
         const videos = [];
-        data.items.forEach(item => {
-            videos.push({
-                videoId: item.snippet.resourceId.videoId,
-                title: item.snippet.title,
-                description: item.snippet.description,
-                thumbnail: item.snippet.thumbnails.default.url,
-            })
-        });
 
-        this.setState({
-            videos,
-        }, () => {
-            this.play(0, false);
-        })
+        /**
+         * 캐시 확인
+         */
+        const cache = getPlaylistItemsFromLocalStorage();
+        if (cache) {
+            const savedDate = new Date(cache.saveTime);
+            const currentDate = new Date();
+            if (savedDate.getFullYear() === currentDate.getFullYear() &&
+                savedDate.getMonth() === currentDate.getMonth() &&
+                savedDate.getDate() === currentDate.getDate()) {
+                const cachedPlaylistItems = cache.playlistItems;
+                if (cachedPlaylistItems.length > 0) {
+                    cachedPlaylistItems.forEach(item => {
+                        item.snippet && videos.push({
+                            videoId: item.snippet.resourceId.videoId,
+                            title: item.snippet.title,
+                            description: item.snippet.description,
+                            thumbnail: item.snippet.thumbnails.default.url,
+                        })
+                    });
+                    this.setState({
+                        videos,
+                        dataState: true,
+                    }, () => {
+                        this.play(0, false);
+                    });
+                    return;
+                }
+            }
+        }
+        /**
+         * 캐시 없으면 요청
+         */
+        fetchPlaylistItems().then(response => {
+            const playlistItems = response.data;
+            if (playlistItems.length > 0) {
+                // setPlaylistItemsToLocalStorage(playlistItems);
+                playlistItems.forEach(item => {
+                    item.snippet && videos.push({
+                        videoId: item.snippet.resourceId.videoId,
+                        title: item.snippet.title,
+                        description: item.snippet.description,
+                        thumbnail: item.snippet.thumbnails.default.url,
+                    })
+                });
+                this.setState({
+                    videos,
+                    dataState: true,
+                }, () => {
+                    this.play(0, false);
+                })
+            }
+        }).catch((e) => {
+
+        });
     };
 
     play = (index, autoPlay = true) => {
@@ -122,20 +167,16 @@ class App extends Component {
     };
 
     onPlayerError = (error) => {
-        console.log('ERROR', error);
         this.play(this.getNextIndex());
     };
 
     onPlayerPlay = (play) => {
-        console.log('PLAY', play)
     };
 
     onPlayerPause = (pause) => {
-        console.log('PAUSE', pause);
     };
 
     onPlayerEnd = (end) => {
-        console.log('END', end);
         this.play(this.getNextIndex());
     };
 
@@ -235,6 +276,9 @@ class App extends Component {
         const { classes } = this.props;
         return (
             <div className="App">
+                {
+                    this.state.playerState && this.state.dataState ? '' : <Loading />
+                }
                 <Helmet>
                     <title>{currentVideo ? currentVideo.title : ''}</title>
                 </Helmet>
