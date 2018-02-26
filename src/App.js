@@ -40,6 +40,7 @@ class App extends Component {
             random: true,
             autoPlay: false,
             playerState: null,
+            playerInitialized: false,
             dataState: false,
             navigatorHeight: null,
         };
@@ -137,6 +138,14 @@ class App extends Component {
                 autoPlay,
             })
         }
+        if (document.body.offsetWidth >= 960) {
+            Scroll.scroller.scrollTo(`video_${index}`, {
+                duration: 500,
+                smooth: true,
+                containerId: 'navigator',
+                offset: 50,
+            });
+        }
     };
 
     getNextIndex = () => {
@@ -158,6 +167,9 @@ class App extends Component {
 
     onPlayerReady = (event) => {
         this.player = event.target;
+        this.setState({
+            playerInitialized: true,
+        })
     };
 
     onPlayerStateChange = (state) => {
@@ -265,7 +277,7 @@ class App extends Component {
         return (
             <div className="App">
                 {
-                    this.state.playerState && this.state.dataState ? '' : <Loading />
+                    this.state.playerInitialized && this.state.dataState ? '' : <Loading />
                 }
                 <Helmet>
                     <title>{currentVideo ? currentVideo.title : ''}</title>
@@ -294,6 +306,7 @@ class App extends Component {
                         </Grid>
                         <Grid item xs={12} md={6} lg={5}>
                             <Paper
+                                id="navigator"
                                 className={`${classes.paper} navigator`}
                                 style={{
                                     height: this.state.navigatorHeight && this.state.navigatorHeight,

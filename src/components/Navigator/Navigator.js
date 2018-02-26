@@ -2,9 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './Navigator.css';
 
+import * as Scroll from 'react-scroll';
 import List from 'material-ui/List';
 
 import Item from './Item';
+
+const Element = Scroll.Element;
 
 class Navigator extends React.Component {
 
@@ -30,17 +33,21 @@ class Navigator extends React.Component {
                 boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .30)',
             };
             return (
-                <Item
+                <Element
                     key={video.videoId}
-                    index={index}
-                    videoId={video.videoId}
-                    title={video.title}
-                    description={video.description}
-                    thumbnail={video.thumbnail}
-                    onClick={this.props.onItemClicked}
-                    style={this.props.currentVideoIndex === index ? selectedStyle : {}}
-                    selected={this.props.currentVideoIndex === index}
-                />
+                    name={`video_${index}`}
+                >
+                    <Item
+                        index={index}
+                        videoId={video.videoId}
+                        title={video.title}
+                        description={video.description}
+                        thumbnail={video.thumbnail}
+                        onClick={this.props.onItemClicked}
+                        style={this.props.currentVideoIndex === index ? selectedStyle : {}}
+                        selected={this.props.currentVideoIndex === index}
+                    />
+                </Element>
             )
         });
     };
