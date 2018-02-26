@@ -108,7 +108,7 @@ class App extends Component {
         fetchPlaylistItems().then(response => {
             const playlistItems = response.data;
             if (playlistItems.length > 0) {
-                // setPlaylistItemsToLocalStorage(playlistItems);
+                setPlaylistItemsToLocalStorage(playlistItems);
                 playlistItems.forEach(item => {
                     item.snippet && videos.push({
                         videoId: item.snippet.resourceId.videoId,
@@ -204,18 +204,6 @@ class App extends Component {
 
     renderAppBar = () => {
         const currentVideo = this.state.videos[this.state.currentVideoIndex];
-        const styles = {
-            root: {
-                flexGrow: 1,
-            },
-            flex: {
-                flex: 1,
-            },
-            menuButton: {
-                marginLeft: -12,
-                marginRight: 20,
-            },
-        };
         const { classes } = this.props;
         return (
             <div className={classes.root}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ListItem, ListItemText } from 'material-ui/List';
+import { ListItem } from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 
 class Item extends React.Component {

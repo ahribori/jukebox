@@ -26,10 +26,6 @@ class Player extends React.Component {
     };
 
     handleStateChange = (e) => {
-        const state = {
-            target: e.target,
-            code: e.data,
-        }
     };
 
     render() {
