@@ -28,6 +28,12 @@ const styles = theme => ({
         textAlign: 'center',
         color: theme.palette.text.secondary,
     },
+    blackPaper: {
+        padding: theme.spacing.unit * 2,
+        textAlign: 'center',
+        color: '#F5F5F5',
+        backgroundColor: 'rgba(0,0,0,0.95)',
+    },
 });
 
 class App extends Component {
@@ -294,11 +300,9 @@ class App extends Component {
                         <Grid item xs={12} md={6} lg={7}>
                             <Grid container spacing={16}>
                                 <Grid item xs={12}>
-                                    <Paper className={classes.paper}>Ad</Paper>
+                                    <Paper className={classes.blackPaper}>Ad</Paper>
                                     {this.renderPlayer()}
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Paper className={classes.paper}>
+                                    <Paper className={classes.blackPaper}>
                                         {this.renderRemocon()}
                                     </Paper>
                                 </Grid>

@@ -9,6 +9,7 @@ import SkipNextIcon from 'material-ui-icons/SkipNext';
 
 const styles = theme => ({
     button: {
+        color: '#F5F5F5',
         margin: theme.spacing.unit,
     },
 });
