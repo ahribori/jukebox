@@ -43,7 +43,7 @@ class App extends Component {
             videos: [],
             currentVideoId: null,
             currentVideoIndex: 0,
-            random: true,
+            random: false,
             autoPlay: false,
             playerState: null,
             playerInitialized: false,
@@ -158,8 +158,8 @@ class App extends Component {
         const videosLength = this.state.videos.length;
         let nextIndex;
         if (!this.state.random) {
-            nextIndex = this.state.currentIndex < videosLength - 1
-                ? this.state.currentIndex + 1 : 0;
+            nextIndex = this.state.currentVideoIndex < videosLength - 1
+                ? this.state.currentVideoIndex + 1 : 0;
         } else {
             let randomIndex = this.state.currentVideoIndex;
             while (randomIndex === this.state.currentVideoIndex) {
@@ -220,6 +220,12 @@ class App extends Component {
         this.play(this.getNextIndex());
     };
 
+    onRemoconRandomButtonClick = (random) => {
+        this.setState({
+            random,
+        })
+    };
+
     renderAppBar = () => {
         const currentVideo = this.state.videos[this.state.currentVideoIndex];
         const { classes } = this.props;
@@ -266,6 +272,8 @@ class App extends Component {
             onPauseButtonClick={this.onRemoconPauseButtonClick}
             onStopButtonClick={this.onRemoconStopButtonClick}
             onNextButtonClick={this.onRemoconNextButtonClick}
+            onRandomButtonClick={this.onRemoconRandomButtonClick}
+            random={this.state.random}
         />
     );
 

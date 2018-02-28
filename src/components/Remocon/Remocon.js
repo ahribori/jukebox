@@ -6,6 +6,7 @@ import PlayIcon from 'material-ui-icons/PlayArrow';
 import StopIcon from 'material-ui-icons/Stop';
 import PauseIcon from 'material-ui-icons/Pause';
 import SkipNextIcon from 'material-ui-icons/SkipNext';
+import RandomIcon from 'material-ui-icons/Shuffle';
 
 const styles = theme => ({
     button: {
@@ -15,7 +16,6 @@ const styles = theme => ({
 });
 
 class Remocon extends React.Component {
-
     static propTypes = {
         /**
          -1 –시작되지 않음
@@ -30,14 +30,27 @@ class Remocon extends React.Component {
         onPauseButtonClick: PropTypes.func,
         onStopButtonClick: PropTypes.func,
         onNextButtonClick: PropTypes.func,
+        onRandomButtonClick: PropTypes.func,
+        random: PropTypes.bool,
     };
 
     static defaultProps = {
         playerState: -1,
-        onPlayButtonClick: () => {},
-        onPauseButtonClick: () => {},
-        onStopButtonClick: () => {},
-        onNextButtonClick: () => {},
+        onPlayButtonClick: () => {
+        },
+        onPauseButtonClick: () => {
+        },
+        onStopButtonClick: () => {
+        },
+        onNextButtonClick: () => {
+        },
+        onRandomButtonClick: () => {
+        },
+        random: false,
+    };
+
+    onRandomButtonClick = () => {
+        this.props.onRandomButtonClick(!this.props.random);
     };
 
     render() {
@@ -52,13 +65,20 @@ class Remocon extends React.Component {
                         this.props.onPlayButtonClick();
                     }
                 }}>
-                    { this.props.playerState === 1 ? <PauseIcon /> : <PlayIcon />}
+                    {this.props.playerState === 1 ? <PauseIcon /> : <PlayIcon />}
                 </Button>
                 <Button className={classes.button} onClick={this.props.onStopButtonClick}>
                     <StopIcon />
                 </Button>
                 <Button className={classes.button} onClick={this.props.onNextButtonClick}>
                     <SkipNextIcon />
+                </Button>
+                <Button className={classes.button} onClick={this.onRandomButtonClick}>
+                    <RandomIcon
+                        style={{
+                            color: this.props.random ? 'yellow' : ''
+                        }}
+                    />
                 </Button>
             </div>
         );
