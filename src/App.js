@@ -18,6 +18,7 @@ import Loading from './components/Loading';
 
 import { fetchPlaylistItems } from './api/fetch';
 import { setPlaylistItemsToLocalStorage, getPlaylistItemsFromLocalStorage } from './utils/storage';
+import shuffle from './utils/shuffle';
 
 const styles = theme => ({
     root: {
@@ -144,6 +145,10 @@ class App extends Component {
                 autoPlay,
             })
         }
+        this.scrollToVideo(index);
+    };
+
+    scrollToVideo = (index) => {
         if (document.body.offsetWidth >= 960) {
             Scroll.scroller.scrollTo(`video_${index}`, {
                 duration: 500,
@@ -156,18 +161,8 @@ class App extends Component {
 
     getNextIndex = () => {
         const videosLength = this.state.videos.length;
-        let nextIndex;
-        if (!this.state.random) {
-            nextIndex = this.state.currentVideoIndex < videosLength - 1
+        const nextIndex = this.state.currentVideoIndex < videosLength - 1
                 ? this.state.currentVideoIndex + 1 : 0;
-        } else {
-            let randomIndex = this.state.currentVideoIndex;
-            while (randomIndex === this.state.currentVideoIndex) {
-                randomIndex = Math.round(Math.random() * (videosLength - 1));
-                console.log(`randomIndex = ${randomIndex}`)
-            }
-            nextIndex = randomIndex;
-        }
         return nextIndex;
     };
 
@@ -221,9 +216,18 @@ class App extends Component {
     };
 
     onRemoconRandomButtonClick = (random) => {
-        this.setState({
-            random,
-        })
+        if (random) {
+            this.setState({
+                currentVideoIndex: 0,
+                videos: shuffle(this.state.videos),
+                random,
+            });
+            this.scrollToVideo(0);
+        } else {
+            this.setState({
+                random,
+            })
+        }
     };
 
     renderAppBar = () => {
