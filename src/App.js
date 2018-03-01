@@ -42,6 +42,7 @@ class App extends Component {
         super(props);
         this.state = {
             videos: [],
+            shuffleOrder: [],
             currentVideoId: null,
             currentVideoIndex: 0,
             random: false,
@@ -161,8 +162,15 @@ class App extends Component {
 
     getNextIndex = () => {
         const videosLength = this.state.videos.length;
-        const nextIndex = this.state.currentVideoIndex < videosLength - 1
-                ? this.state.currentVideoIndex + 1 : 0;
+        let nextIndex;
+        if (!this.state.random) {
+            nextIndex = this.state.currentVideoIndex < videosLength - 1
+                    ? this.state.currentVideoIndex + 1 : 0;
+        } else {
+            const indexOfShuffleOrder = this.state.shuffleOrder.indexOf(this.state.currentVideoIndex);
+            nextIndex = indexOfShuffleOrder < videosLength - 1
+                ? this.state.shuffleOrder[indexOfShuffleOrder + 1] : this.state.shuffleOrder[0];
+        }
         return nextIndex;
     };
 
@@ -217,12 +225,14 @@ class App extends Component {
 
     onRemoconRandomButtonClick = (random) => {
         if (random) {
+            let shuffleOrder = [];
+            for (let i = 0, length = this.state.videos.length; i < length; i++) {
+                shuffleOrder.push(i);
+            }
             this.setState({
-                currentVideoIndex: 0,
-                videos: shuffle(this.state.videos),
+                shuffleOrder: shuffle(shuffleOrder),
                 random,
             });
-            this.scrollToVideo(0);
         } else {
             this.setState({
                 random,
