@@ -15,10 +15,12 @@ import Player from './components/Player';
 import Remocon from './components/Remocon';
 import Navigator from './components/Navigator';
 import Loading from './components/Loading';
+import Search from './components/Search';
 
 import { fetchPlaylistItems } from './api/fetch';
 import { setPlaylistItemsToLocalStorage, getPlaylistItemsFromLocalStorage } from './utils/storage';
 import shuffle from './utils/shuffle';
+import debounce from 'lodash.debounce';
 
 const styles = theme => ({
     root: {
@@ -35,6 +37,10 @@ const styles = theme => ({
         color: '#F5F5F5',
         backgroundColor: 'rgba(0,0,0,0.95)',
     },
+    searchBar: {
+        paddingTop: 12,
+        paddingBottom: 12,
+    }
 });
 
 class App extends Component {
@@ -51,6 +57,7 @@ class App extends Component {
             playerInitialized: false,
             dataState: false,
             navigatorHeight: null,
+            searchText: '',
         };
     }
 
@@ -65,7 +72,7 @@ class App extends Component {
     fittingNavigator = () => {
         this.setState({
             navigatorHeight: document.body.offsetWidth >= 960 ?
-                document.body.offsetHeight - 140 : 'auto',
+                document.body.offsetHeight - 220 : 'auto',
         });
     };
 
@@ -155,7 +162,7 @@ class App extends Component {
                 duration: 500,
                 smooth: true,
                 containerId: 'navigator',
-                offset: 50,
+                offset: 200,
             });
         }
     };
@@ -172,6 +179,10 @@ class App extends Component {
                 ? this.state.shuffleOrder[indexOfShuffleOrder + 1] : this.state.shuffleOrder[0];
         }
         return nextIndex;
+    };
+
+    filteringBySearchText = (searchText) => {
+        // TODO 검색 구현
     };
 
     onPlayerReady = (event) => {
@@ -240,6 +251,13 @@ class App extends Component {
         }
     };
 
+    onSearchBarChange = (searchText) => {
+        this.setState({
+            searchText,
+        })
+        this.filteringBySearchText(searchText);
+    };
+
     renderAppBar = () => {
         const currentVideo = this.state.videos[this.state.currentVideoIndex];
         const { classes } = this.props;
@@ -291,6 +309,12 @@ class App extends Component {
         />
     );
 
+    renderSearch = () => (
+        <Search
+            onChange={debounce(this.onSearchBarChange, 500)}
+        />
+    );
+
     renderNavigator = () => (
         <Navigator
             videos={this.state.videos}
@@ -320,26 +344,35 @@ class App extends Component {
                 <section>
                     <Grid container spacing={16}>
                         <Grid item xs={12} md={6} lg={7}>
+                            <Paper className={classes.blackPaper}>Ad</Paper>
+                            {this.renderPlayer()}
+                            <Paper className={classes.blackPaper}>
+                                {this.renderRemocon()}
+                            </Paper>
+                        </Grid>
+                        <Grid item xs={12} md={6} lg={5}>
                             <Grid container spacing={16}>
                                 <Grid item xs={12}>
-                                    <Paper className={classes.blackPaper}>Ad</Paper>
-                                    {this.renderPlayer()}
-                                    <Paper className={classes.blackPaper}>
-                                        {this.renderRemocon()}
+                                    <Paper
+                                        id="searchBar"
+                                        className={`${classes.paper} ${classes.searchBar}`}
+                                    >
+                                        {this.renderSearch()}
+                                    </Paper>
+                                </Grid>
+
+                                <Grid item xs={12}>
+                                    <Paper
+                                        id="navigator"
+                                        className={`${classes.paper} navigator`}
+                                        style={{
+                                            height: this.state.navigatorHeight && this.state.navigatorHeight,
+                                        }}
+                                    >
+                                        {this.renderNavigator()}
                                     </Paper>
                                 </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid item xs={12} md={6} lg={5}>
-                            <Paper
-                                id="navigator"
-                                className={`${classes.paper} navigator`}
-                                style={{
-                                    height: this.state.navigatorHeight && this.state.navigatorHeight,
-                                }}
-                            >
-                                {this.renderNavigator()}
-                            </Paper>
                         </Grid>
                     </Grid>
                 </section>
