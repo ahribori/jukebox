@@ -162,7 +162,7 @@ class App extends Component {
                 duration: 500,
                 smooth: true,
                 containerId: 'navigator',
-                offset: 200,
+                offset: 150,
             });
         }
     };
@@ -179,10 +179,6 @@ class App extends Component {
                 ? this.state.shuffleOrder[indexOfShuffleOrder + 1] : this.state.shuffleOrder[0];
         }
         return nextIndex;
-    };
-
-    filteringBySearchText = (searchText) => {
-        // TODO 검색 구현
     };
 
     onPlayerReady = (event) => {
@@ -254,8 +250,7 @@ class App extends Component {
     onSearchBarChange = (searchText) => {
         this.setState({
             searchText,
-        })
-        this.filteringBySearchText(searchText);
+        });
     };
 
     renderAppBar = () => {
@@ -320,6 +315,7 @@ class App extends Component {
             videos={this.state.videos}
             onItemClicked={this.handleItemClick}
             currentVideoIndex={this.state.currentVideoIndex}
+            searchText={this.state.searchText}
         />
     );
 

@@ -13,6 +13,7 @@ class Item extends React.Component {
         thumbnail: PropTypes.string,
         onClick: PropTypes.func,
         selected: PropTypes.bool,
+        highlightText: PropTypes.string,
     };
 
     static defaultProps = {
@@ -32,6 +33,18 @@ class Item extends React.Component {
         });
     };
 
+    highlighting = (title) => {
+        if (!this.props.highlightText) {
+            return title;
+        }
+        const filter = new RegExp(this.props.highlightText, 'gi');
+        const filteredTitle = filter.exec(title);
+        return title.replace(
+            new RegExp(filteredTitle[0], 'g'),
+            `<span style="color: red; background-color: yellow; font-weight: bold;">${filteredTitle[0]}</span>`
+        )
+    };
+
     render() {
         return (
             <ListItem
@@ -47,12 +60,18 @@ class Item extends React.Component {
                         height: 60,
                     }}
                 />
-                <span style={{
-                    fontSize: '0.8rem',
-                    fontWeight: this.props.selected ? 'bold' : '',
-                    color: this.props.selected ? 'white' : '',
-                    paddingLeft: 10,
-                }}>{this.props.title}</span>
+                <span
+                    style={{
+                        fontSize: '0.8rem',
+                        fontWeight: this.props.selected ? 'bold' : '',
+                        color: this.props.selected ? 'white' : '',
+                        paddingLeft: 10,
+
+                    }}
+                    dangerouslySetInnerHTML={{
+                        __html: this.highlighting(this.props.title)
+                    }}
+                />
             </ListItem>
         );
     }

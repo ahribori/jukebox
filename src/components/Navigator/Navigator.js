@@ -15,6 +15,7 @@ class Navigator extends React.Component {
         videos: PropTypes.array,
         onItemClicked: PropTypes.func,
         currentVideoIndex: PropTypes.number,
+        searchText: PropTypes.string,
     };
 
     static defaultProps = {
@@ -32,6 +33,12 @@ class Navigator extends React.Component {
                 border: 0,
                 boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .30)',
             };
+            if (this.props.searchText !== '') {
+                const filter = new RegExp(this.props.searchText, 'gi');
+                if (!filter.test(video.title)) {
+                    return null;
+                }
+            }
             return (
                 <Element
                     key={video.videoId}
@@ -46,6 +53,7 @@ class Navigator extends React.Component {
                         onClick={this.props.onItemClicked}
                         style={this.props.currentVideoIndex === index ? selectedStyle : {}}
                         selected={this.props.currentVideoIndex === index}
+                        highlightText={this.props.searchText !== '' ? this.props.searchText : null}
                     />
                 </Element>
             )
