@@ -61,10 +61,16 @@ class Navigator extends React.Component {
     };
 
     render() {
-        return (
+        const filteredItemLength = this.renderItems().filter(item => item !== null).length;
+        return filteredItemLength > 0 ? (
             <List>
                 {this.renderItems()}
             </List>
+        ) : (
+            <div>
+                <span style={{ fontWeight: 'bold' }}>{this.props.searchText}</span>
+                와(과) 일치하는 결과가 없습니다.
+            </div>
         );
     }
 }
