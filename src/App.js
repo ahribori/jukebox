@@ -42,6 +42,9 @@ const styles = theme => ({
     searchBar: {
         paddingTop: 12,
         paddingBottom: 12,
+    },
+    adZone: {
+        padding: 0,
     }
 });
 
@@ -332,8 +335,12 @@ class App extends Component {
     );
 
     renderAd1 = () => {
+        const { classes } = this.props;
+        if (process.env.NODE_ENV !== 'production') {
+            return null;
+        }
         return (
-            <Paper className={this.props.classes.blackPaper}>
+            <Paper className={`${classes.blackPaper} ${classes.adZone}`}>
                 <AdSense.Google
                     client="ca-pub-9640568080207154"
                     slot="6078945899"
