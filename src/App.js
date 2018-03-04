@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import './App.css';
 
+import AdSense from 'react-adsense';
 import * as Scroll from 'react-scroll';
 
 import { withStyles } from 'material-ui/styles';
@@ -21,6 +22,7 @@ import { fetchPlaylistItems } from './api/fetch';
 import { setPlaylistItemsToLocalStorage, getPlaylistItemsFromLocalStorage } from './utils/storage';
 import shuffle from './utils/shuffle';
 import debounce from 'lodash.debounce';
+import PropTypes from "prop-types";
 
 const styles = theme => ({
     root: {
@@ -44,6 +46,15 @@ const styles = theme => ({
 });
 
 class App extends Component {
+    static propTypes = {
+        onLoad: PropTypes.func,
+    };
+
+    static defaultProps = {
+        onLoad: () => {
+        },
+    };
+
     constructor(props) {
         super(props);
         this.state = {
@@ -67,6 +78,7 @@ class App extends Component {
         window.addEventListener('resize', (e) => {
             this.fittingNavigator();
         });
+        this.props.onLoad();
     }
 
     fittingNavigator = () => {
@@ -172,7 +184,7 @@ class App extends Component {
         let nextIndex;
         if (!this.state.random) {
             nextIndex = this.state.currentVideoIndex < videosLength - 1
-                    ? this.state.currentVideoIndex + 1 : 0;
+                ? this.state.currentVideoIndex + 1 : 0;
         } else {
             const indexOfShuffleOrder = this.state.shuffleOrder.indexOf(this.state.currentVideoIndex);
             nextIndex = indexOfShuffleOrder < videosLength - 1
@@ -319,6 +331,33 @@ class App extends Component {
         />
     );
 
+    renderAd1 = () => {
+        return (
+            <Paper className={this.props.classes.blackPaper}>
+                <AdSense.Google
+                    client="ca-pub-9640568080207154"
+                    slot="6078945899"
+                    format="auto"
+                />
+            </Paper>
+        );
+    };
+
+    renderAd2 = () => {
+        if (process.env.NODE_ENV !== 'production') {
+            return null;
+        }
+        return (
+            <Paper className={this.props.classes.paper}>
+                <AdSense.Google
+                    client="ca-pub-9640568080207154"
+                    slot="6905367437"
+                    format="auto"
+                />
+            </Paper>
+        );
+    };
+
     render() {
         const currentVideo = this.state.videos[this.state.currentVideoIndex];
         const { classes } = this.props;
@@ -340,7 +379,7 @@ class App extends Component {
                 <section>
                     <Grid container spacing={16}>
                         <Grid item xs={12} md={6} lg={7}>
-                            <Paper className={classes.blackPaper}>Ad</Paper>
+                            {this.renderAd1()}
                             {this.renderPlayer()}
                             <Paper className={classes.blackPaper}>
                                 {this.renderRemocon()}
