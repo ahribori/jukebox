@@ -1,0 +1,7 @@
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://jukebox.pe.krapple-touch-icon-144x144.png" />
+<link rel="apple-touch-icon-precomposed" sizes="152x152" href="http://jukebox.pe.krapple-touch-icon-152x152.png" />
+<link rel="icon" type="image/png" href="http://jukebox.pe.krfavicon-32x32.png" sizes="32x32" />
+<link rel="icon" type="image/png" href="http://jukebox.pe.krfavicon-16x16.png" sizes="16x16" />
+<meta name="application-name" content="Jukebox"/>
+<meta name="msapplication-TileColor" content="#FFFFFF" />
+<meta name="msapplication-TileImage" content="http://jukebox.pe.krmstile-144x144.png" />
