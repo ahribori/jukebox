@@ -374,7 +374,7 @@ class App extends Component {
                     this.state.playerInitialized && this.state.dataState ? '' : <Loading />
                 }
                 <Helmet>
-                    <title>{currentVideo ? currentVideo.title : ''}</title>
+                    <title>{currentVideo ? `Jukebox::${currentVideo.title}` : 'Jukebox::매일 업데이트되는 TOP100 인기 차트 노래 듣기'}</title>
                 </Helmet>
                 <header>
                     <Grid container spacing={16}>
