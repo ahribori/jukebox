@@ -16,6 +16,7 @@ class Navigator extends React.Component {
         onItemClicked: PropTypes.func,
         currentVideoIndex: PropTypes.number,
         searchText: PropTypes.string,
+        myPlaylistEnabled: PropTypes.bool,
     };
 
     static defaultProps = {
@@ -23,12 +24,15 @@ class Navigator extends React.Component {
         onItemClicked: () => {
         },
         currentVideoIndex: 0,
+        myPlaylistEnabled: false,
     };
 
     renderItems = () => {
         return this.props.videos.map((video, index) => {
             const selectedStyle = {
-                background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+                background: !this.props.myPlaylistEnabled ?
+                    'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)' :
+                    'linear-gradient(45deg, #F57C00 30%, #FFC107 90%)',
                 borderRadius: 3,
                 border: 0,
                 boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .30)',

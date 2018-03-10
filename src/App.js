@@ -10,6 +10,7 @@ import Grid from 'material-ui/Grid';
 import Avatar from 'material-ui/Avatar';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
+import Snackbar from 'material-ui/Snackbar';
 
 import Player from './components/Player';
 import Remocon from './components/Remocon';
@@ -18,7 +19,14 @@ import Loading from './components/Loading';
 import Search from './components/Search';
 
 import { fetchPlaylistItems } from './api/fetch';
-import { setPlaylistItemsToLocalStorage, getPlaylistItemsFromLocalStorage } from './utils/storage';
+import {
+    setPlaylistItemsToLocalStorage,
+    getPlaylistItemsFromLocalStorage,
+    setOriginPlaylistToLocalStorage,
+    getOriginPlaylistFromLocalStorage,
+    setMyPlaylistToLocalStorage,
+    getMyPlaylistFromLocalStorage,
+} from './utils/storage';
 import shuffle from './utils/shuffle';
 import debounce from 'lodash.debounce';
 import PropTypes from "prop-types";
@@ -64,6 +72,7 @@ class App extends Component {
             shuffleOrder: [],
             currentVideoId: null,
             currentVideoIndex: 0,
+            currentVideoExistingInMyPlaylist: false,
             random: false,
             autoPlay: false,
             playerState: null,
@@ -71,6 +80,9 @@ class App extends Component {
             dataState: false,
             navigatorHeight: null,
             searchText: '',
+            myPlaylistEnabled: false,
+            snackbarOpen: false,
+            snackbarMessage: '',
         };
     }
 
@@ -83,6 +95,13 @@ class App extends Component {
         this.props.onLoad();
     }
 
+    showMessage = (message) => {
+        this.setState({
+            snackbarOpen: true,
+            snackbarMessage: message,
+        })
+    };
+
     fittingNavigator = () => {
         this.setState({
             navigatorHeight: document.body.offsetWidth >= 960 ?
@@ -90,7 +109,29 @@ class App extends Component {
         });
     };
 
+    setShuffleOrder = () => {
+        let shuffleOrder = [];
+        for (let i = 0, length = this.state.videos.length; i < length; i++) {
+            shuffleOrder.push(i);
+        }
+        this.setState({
+            shuffleOrder: shuffle(shuffleOrder),
+        });
+    };
+
+    checkCurrentVideoExistingInMyPlaylist = (videoId) => {
+        const myPlaylist = getMyPlaylistFromLocalStorage();
+        let currentVideoExistingInMyPlaylist = false;
+        if (myPlaylist) {
+            currentVideoExistingInMyPlaylist = myPlaylist.isExist[videoId];
+            this.setState({
+                currentVideoExistingInMyPlaylist: Boolean(currentVideoExistingInMyPlaylist)
+            })
+        }
+    };
+
     handleItemClick = (e) => {
+        this.checkCurrentVideoExistingInMyPlaylist(e.videoId);
         this.setState({
             currentVideoIndex: e.index,
             currentVideoId: e.videoId,
@@ -122,6 +163,7 @@ class App extends Component {
                             thumbnail: item.snippet.thumbnails.default.url,
                         })
                     });
+                    setOriginPlaylistToLocalStorage(videos);
                     this.setState({
                         videos,
                         dataState: true,
@@ -161,6 +203,7 @@ class App extends Component {
 
     play = (index, autoPlay = true) => {
         if (index < this.state.videos.length) {
+            this.checkCurrentVideoExistingInMyPlaylist(this.state.videos[index].videoId);
             this.setState({
                 currentVideoIndex: index,
                 currentVideoId: this.state.videos[index].videoId,
@@ -246,17 +289,82 @@ class App extends Component {
 
     onRemoconRandomButtonClick = (random) => {
         if (random) {
-            let shuffleOrder = [];
-            for (let i = 0, length = this.state.videos.length; i < length; i++) {
-                shuffleOrder.push(i);
+            this.setShuffleOrder();
+        }
+        this.setState({
+            random,
+        })
+    };
+
+    onRemoconAddPlaylistButtonClick = () => {
+        const myPlaylist = getMyPlaylistFromLocalStorage();
+        const currentVideo = this.state.videos[this.state.currentVideoIndex];
+        if (myPlaylist) {
+            if (myPlaylist.isExist[currentVideo.videoId]) {
+                const items = myPlaylist.playlistItems;
+                for (let i = 0, length = items.length; i < length; i++) {
+                    if (currentVideo.videoId === items[i].videoId) {
+                        delete myPlaylist.isExist[currentVideo.videoId];
+                        myPlaylist.playlistItems.splice(i, 1);
+                        setMyPlaylistToLocalStorage(myPlaylist);
+                        this.setShuffleOrder();
+                        break;
+                    }
+                }
+                this.setState({
+                    videos: myPlaylist.playlistItems,
+                }, () => {
+                    this.play(this.state.currentVideoIndex > 0 ?
+                        this.state.currentVideoIndex - 1 : 0, false);
+                });
+                if (myPlaylist.playlistItems.length === 0) {
+                    this.setState({
+                        myPlaylistEnabled: false,
+                        videos: getOriginPlaylistFromLocalStorage(),
+                    }, () => {
+                        this.setShuffleOrder();
+                        this.play(0, false);
+                    })
+                }
+                this.showMessage('내 플레이리스트에서 제거되었습니다')
+            } else {
+                myPlaylist.isExist[currentVideo.videoId] = 1;
+                myPlaylist.playlistItems.push(currentVideo);
+                setMyPlaylistToLocalStorage(myPlaylist);
+                this.checkCurrentVideoExistingInMyPlaylist(currentVideo.videoId);
+                this.showMessage('내 플레이리스트에 추가되었습니다')
+            }
+        } else {
+            setMyPlaylistToLocalStorage({
+                isExist: { [currentVideo.videoId]: 1, },
+                playlistItems: [currentVideo],
+            });
+            this.checkCurrentVideoExistingInMyPlaylist(currentVideo.videoId);
+        }
+    };
+
+    onRemoconPlaylistButtonClick = (myPlaylistEnabled) => {
+        if (myPlaylistEnabled) {
+            const myPlaylist = getMyPlaylistFromLocalStorage();
+            if (!myPlaylist || myPlaylist.playlistItems.length === 0) {
+                return this.showMessage('내 플레이리스트가 비어있습니다');
             }
             this.setState({
-                shuffleOrder: shuffle(shuffleOrder),
-                random,
+                myPlaylistEnabled,
+                videos: myPlaylist.playlistItems,
+            }, () => {
+                this.setShuffleOrder();
+                this.play(0, false);
+                this.showMessage('내 플레이리스트가 활성화되었습니다');
             });
         } else {
             this.setState({
-                random,
+                myPlaylistEnabled,
+                videos: getOriginPlaylistFromLocalStorage(),
+            }, () => {
+                this.setShuffleOrder();
+                this.play(0, false);
+                this.showMessage('내 플레이리스트가 비활성화되었습니다');
             })
         }
     };
@@ -277,7 +385,9 @@ class App extends Component {
                     paddingBottom: 5,
                     border: 0,
                     color: 'white',
-                    background: 'linear-gradient(45deg, #320b86 30%, #9a67ea 90%)',
+                    background: !this.state.myPlaylistEnabled ?
+                        'linear-gradient(45deg, #320b86 30%, #9a67ea 90%)' :
+                        'linear-gradient(45deg, #C2185B 30%, #F06292 90%)',
                 }}>
                     <Toolbar>
                         <Avatar
@@ -314,7 +424,11 @@ class App extends Component {
             onStopButtonClick={this.onRemoconStopButtonClick}
             onNextButtonClick={this.onRemoconNextButtonClick}
             onRandomButtonClick={this.onRemoconRandomButtonClick}
+            onAddPlaylistButtonClick={this.onRemoconAddPlaylistButtonClick}
+            onPlaylistButtonClick={this.onRemoconPlaylistButtonClick}
             random={this.state.random}
+            myPlaylistEnabled={this.state.myPlaylistEnabled}
+            currentVideoExistingInMyPlaylist={this.state.currentVideoExistingInMyPlaylist}
         />
     );
 
@@ -330,6 +444,7 @@ class App extends Component {
             onItemClicked={this.handleItemClick}
             currentVideoIndex={this.state.currentVideoIndex}
             searchText={this.state.searchText}
+            myPlaylistEnabled={this.state.myPlaylistEnabled}
         />
     );
 
@@ -365,7 +480,6 @@ class App extends Component {
     };
 
     render() {
-        const currentVideo = this.state.videos[this.state.currentVideoIndex];
         const { classes } = this.props;
         return (
             <div className="App">
@@ -414,6 +528,21 @@ class App extends Component {
                         </Grid>
                     </Grid>
                 </section>
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'center'
+                    }}
+                    open={this.state.snackbarOpen}
+                    onClose={(function () {
+                        this.setState({ snackbarOpen: false })
+                    }).bind(this)}
+                    SnackbarContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={<span id="message-id">{this.state.snackbarMessage}</span>}
+                    autoHideDuration={2000}
+                />
             </div>
         );
     }
