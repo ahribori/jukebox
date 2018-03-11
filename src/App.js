@@ -356,7 +356,7 @@ class App extends Component {
             }, () => {
                 this.setShuffleOrder();
                 this.play(0, false);
-                this.showMessage('내 플레이리스트가 활성화되었습니다');
+                this.showMessage('내 플레이리스트를 불러옵니다');
             });
         } else {
             this.setState({
@@ -365,7 +365,7 @@ class App extends Component {
             }, () => {
                 this.setShuffleOrder();
                 this.play(0, false);
-                this.showMessage('내 플레이리스트가 비활성화되었습니다');
+                this.showMessage('내 플레이리스트를 닫습니다');
             })
         }
     };
@@ -532,7 +532,7 @@ class App extends Component {
                 <Snackbar
                     anchorOrigin={{
                         vertical: 'bottom',
-                        horizontal: 'center'
+                        horizontal: 'left'
                     }}
                     open={this.state.snackbarOpen}
                     onClose={(function () {

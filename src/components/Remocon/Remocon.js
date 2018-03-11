@@ -71,7 +71,10 @@ class Remocon extends React.Component {
     };
 
     renderPlaylistButtons = () => [
-        <Tooltip title="내 플레이리스트에 추가" key="1">
+        <Tooltip 
+            title={ !this.props.currentVideoExistingInMyPlaylist ?
+                '내 플레이리스트에 추가' : '내 플레이리스트에서 제거' }
+            key="1">
             <Button className={this.props.classes.button} onClick={this.props.onAddPlaylistButtonClick}>
                 <PlaylistAddIcons
                     style={{
@@ -80,7 +83,9 @@ class Remocon extends React.Component {
                 />
             </Button>
         </Tooltip>,
-        <Tooltip title="내 플레이리스트 열기" key="2">
+        <Tooltip title={!this.props.myPlaylistEnabled ?
+            '내 플레이리스트 열기' : '내 플레이리스트 닫기' }
+                 key="2">
             <Button className={this.props.classes.button} onClick={this.onPlaylistButtonClick}>
                 <PlaylistPlayIcons
                     style={{
@@ -117,7 +122,7 @@ class Remocon extends React.Component {
                         <SkipNextIcon />
                     </Button>
                 </Tooltip>
-                <Tooltip title="랜덤 재생 모드">
+                <Tooltip title={ !this.props.random ? '랜덤 재생 켜기' : '랜덤 재생 끄기' }>
                     <Button className={classes.button} onClick={this.onRandomButtonClick}>
                         <RandomIcon
                             style={{
