@@ -189,6 +189,7 @@ class App extends Component {
                         thumbnail: item.snippet.thumbnails.default.url,
                     })
                 });
+                setOriginPlaylistToLocalStorage(videos);
                 this.setState({
                     videos,
                     dataState: true,
