@@ -152,7 +152,8 @@ class App extends Component {
             const currentDate = new Date();
             if (savedDate.getFullYear() === currentDate.getFullYear() &&
                 savedDate.getMonth() === currentDate.getMonth() &&
-                savedDate.getDate() === currentDate.getDate()) {
+                savedDate.getDate() === currentDate.getDate() &&
+                savedDate.getHours() === currentDate.getHours()) {
                 const cachedPlaylistItems = cache.playlistItems;
                 if (cachedPlaylistItems.length > 0) {
                     cachedPlaylistItems.forEach(item => {
