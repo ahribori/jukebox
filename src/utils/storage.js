@@ -57,3 +57,22 @@ export const getMyPlaylistFromLocalStorage = () => {
         }
     }
 };
+
+export const setAppStateToLocalStorage = (state) => {
+    if (window.localStorage) {
+        try {
+            localStorage.setItem('__state__', JSON.stringify(state));
+        } catch (e) {
+        }
+    }
+};
+
+export const getAppStateToLocalStorage = () => {
+    if (window.localStorage) {
+        try {
+            return JSON.parse(localStorage.getItem('__state__'));
+        } catch (e) {
+            return null;
+        }
+    }
+};

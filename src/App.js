@@ -26,6 +26,8 @@ import {
     getOriginPlaylistFromLocalStorage,
     setMyPlaylistToLocalStorage,
     getMyPlaylistFromLocalStorage,
+    setAppStateToLocalStorage,
+    getAppStateToLocalStorage,
 } from './utils/storage';
 import shuffle from './utils/shuffle';
 import debounce from 'lodash.debounce';
@@ -93,6 +95,16 @@ class App extends Component {
             this.fittingNavigator();
         });
         this.props.onLoad();
+
+        const appState = getAppStateToLocalStorage();
+        if (appState) {
+            appState.tutorial = true;
+            setAppStateToLocalStorage(appState);
+        } else {
+            setAppStateToLocalStorage({
+                tutorial: true,
+            });
+        }
     }
 
     showMessage = (message) => {
