@@ -17,6 +17,7 @@ import Remocon from './components/Remocon';
 import Navigator from './components/Navigator';
 import Loading from './components/Loading';
 import Search from './components/Search';
+import Intro from './components/Intro';
 
 import { fetchPlaylistItems } from './api/fetch';
 import {
@@ -85,6 +86,7 @@ class App extends Component {
             myPlaylistEnabled: false,
             snackbarOpen: false,
             snackbarMessage: '',
+            showIntro: false,
         };
     }
 
@@ -97,13 +99,15 @@ class App extends Component {
         this.props.onLoad();
 
         const appState = getAppStateToLocalStorage();
-        if (appState) {
-            appState.tutorial = true;
-            setAppStateToLocalStorage(appState);
-        } else {
+        if (!appState) {
             setAppStateToLocalStorage({
                 tutorial: true,
             });
+        }
+        if (!appState || appState.tutorial === true) {
+            this.setState({
+                showIntro: true,
+            })
         }
     }
 
@@ -542,6 +546,7 @@ class App extends Component {
                         </Grid>
                     </Grid>
                 </section>
+                { this.state.showIntro && <Intro /> }
                 <Snackbar
                     anchorOrigin={{
                         vertical: 'bottom',
