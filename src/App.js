@@ -177,7 +177,8 @@ class App extends Component {
                             videoId: item.snippet.resourceId.videoId,
                             title: item.snippet.title,
                             description: item.snippet.description,
-                            thumbnail: item.snippet.thumbnails.default.url,
+                            thumbnail: item.snippet.thumbnails ?
+                                item.snippet.thumbnails.default.url : ''
                         })
                     });
                     setOriginPlaylistToLocalStorage(videos);
@@ -203,7 +204,8 @@ class App extends Component {
                         videoId: item.snippet.resourceId.videoId,
                         title: item.snippet.title,
                         description: item.snippet.description,
-                        thumbnail: item.snippet.thumbnails.default.url,
+                        thumbnail: item.snippet.thumbnails ?
+                            item.snippet.thumbnails.default.url : ''
                     })
                 });
                 setOriginPlaylistToLocalStorage(videos);

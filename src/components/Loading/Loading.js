@@ -1,6 +1,6 @@
 import React from 'react';
 import { CircularProgress } from 'material-ui/Progress';
-import purple from 'material-ui/colors/purple';
+import grey from 'material-ui/colors/grey';
 
 class Loading extends React.Component {
     render() {
@@ -17,10 +17,10 @@ class Loading extends React.Component {
             }}>
                 <CircularProgress
                     style={{
-                        color: purple[500],
+                        color: grey[600],
                     }}
-                    size={150}
-                    thickness={3} />
+                    size={100}
+                    thickness={1} />
             </div>
         );
     }
